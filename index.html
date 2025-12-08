@@ -3,11 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlashCardApp</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
+    <meta name="description" content="FlashCard App - Study with interactive flashcards. Create decks, review cards, and track your progress.">
+    <title>FlashCard App</title>
+    <link rel="stylesheet" href="Assets/CSS/style.css">
+    <script src="Assets/JS/app.js" defer></script>
 </head>
-<body>
-    
+<body role="application" aria-label="FlashCard Study Application">
+    <!-- Header -->
+    <header class="header">
+        <div class="header__container">
+            <h1 class="header__title">FlashCard App</h1>
+            <nav class="header__nav" aria-label="Main navigation">
+                <a href="#" class="header__link" aria-current="page">Home</a>
+                <a href="#" class="header__link">Browse</a>
+                <a href="#" class="header__link">Create</a>
+                <a href="#" class="header__link">Settings</a>
+                <button class="header__btn" aria-label="Create a new flashcard deck">New Deck</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="Flashcard decks">
+            <div class="sidebar__header">
+                <h2 id="decks-heading">Decks</h2>
+            </div>
+            <ul class="sidebar__list" aria-labelledby="decks-heading">
+                <li class="sidebar__item sidebar__item--active">
+                    <button class="sidebar__btn" id="deck-spanish" aria-current="true">Spanish Vocab</button>
+                </li>
+                <li class="sidebar__item">
+                    <button class="sidebar__btn" id="deck-math">Math Formulas</button>
+                </li>
+                <li class="sidebar__item">
+                    <button class="sidebar__btn" id="deck-history">History Dates</button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main">
+            <section class="card-container">
+                <div class="card" role="region" aria-live="polite" aria-label="Current flashcard">
+                    <div class="card__inner" role="button" tabindex="0" aria-label="Click to flip card">
+                        <div class="card__front">
+                            <p>Question or Term</p>
+                        </div>
+                        <div class="card__back" hidden>
+                            <p>Answer or Definition</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-controls" aria-label="Card navigation controls">
+                    <button class="btn btn--secondary" aria-label="Previous flashcard">← Previous</button>
+                    <span class="card-count" aria-live="polite" aria-atomic="true">1 / 10</span>
+                    <button class="btn btn--primary" aria-label="Next flashcard">Next →</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 FlashCard App. All rights reserved.</p>
+    </footer>
 </body>
 </html>

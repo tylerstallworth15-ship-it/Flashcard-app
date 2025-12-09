@@ -1,73 +1,357 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FlashCard App - Study with interactive flashcards. Create decks, review cards, and track your progress.">
-    <title>FlashCard App</title>
-    <link rel="stylesheet" href="Assets/CSS/style.css">
-    <script src="Assets/JS/app.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="FlashCard App - Study with interactive flashcards. Create decks, review cards, and track your progress."
+  />
+  <title>FlashCard App</title>
+  <link rel="stylesheet" href="Assets/CSS/style.css" />
+  <script src="Assets/JS/app.js" defer></script>
 </head>
-<body role="application" aria-label="FlashCard Study Application">
-    <!-- Header -->
-    <header class="header">
-        <div class="header__container">
-            <h1 class="header__title">FlashCard App</h1>
-            <nav class="header__nav" aria-label="Main navigation">
-                <a href="#" class="header__link" aria-current="page">Home</a>
-                <a href="#" class="header__link">Browse</a>
-                <a href="#" class="header__link">Create</a>
-                <a href="#" class="header__link">Settings</a>
-                <button class="header__btn" aria-label="Create a new flashcard deck">New Deck</button>
-            </nav>
-        </div>
-    </header>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header__container">
+      <h1 class="header__title">QuickFlash</h1>
 
-    <!-- Main Container -->
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" aria-label="Flashcard decks">
-            <div class="sidebar__header">
-                <h2 id="decks-heading">Decks</h2>
-            </div>
-            <ul class="sidebar__list" aria-labelledby="decks-heading">
-                <li class="sidebar__item sidebar__item--active">
-                    <button class="sidebar__btn" id="deck-spanish" aria-current="true">Spanish Vocab</button>
-                </li>
-                <li class="sidebar__item">
-                    <button class="sidebar__btn" id="deck-math">Math Formulas</button>
-                </li>
-                <li class="sidebar__item">
-                    <button class="sidebar__btn" id="deck-history">History Dates</button>
-                </li>
-            </ul>
-        </aside>
+      <nav class="header__nav" aria-label="Main navigation">
+        <a href="#" class="header__link" aria-current="page">Home</a>
+        <a href="#" class="header__link">Browse</a>
+        <a href="#" class="header__link">Create</a>
+        <a href="#" class="header__link">Settings</a>
 
-        <!-- Main Content Area -->
-        <main class="main">
-            <section class="card-container">
-                <div class="card" role="region" aria-live="polite" aria-label="Current flashcard">
-                    <div class="card__inner" role="button" tabindex="0" aria-label="Click to flip card">
-                        <div class="card__front">
-                            <p>Question or Term</p>
-                        </div>
-                        <div class="card__back" hidden>
-                            <p>Answer or Definition</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-controls" aria-label="Card navigation controls">
-                    <button class="btn btn--secondary" aria-label="Previous flashcard">← Previous</button>
-                    <span class="card-count" aria-live="polite" aria-atomic="true">1 / 10</span>
-                    <button class="btn btn--primary" aria-label="Next flashcard">Next →</button>
-                </div>
-            </section>
-        </main>
+        <!-- Search in top-right -->
+        <form class="header__search" role="search" aria-label="Search cards in current deck">
+          <label class="sr-only" for="header-search">Search cards</label>
+          <div class="header__search-wrapper">
+            <span class="header__search-icon" aria-hidden="true">🔍</span>
+            <input
+              id="header-search"
+              type="search"
+              class="header__search-input"
+              placeholder="Search cards..."
+              autocomplete="off"
+            />
+          </div>
+        </form>
+
+        <!-- Theme toggle: Light / Dark only -->
+        <button
+          id="theme-toggle"
+          class="header__btn header__btn--outline"
+          type="button"
+          aria-pressed="false"
+          aria-label="Switch to dark mode"
+        >
+          🌞 Light
+        </button>
+
+        <button
+          id="new-deck-btn"
+          class="header__btn"
+          type="button"
+          aria-label="Create a new flashcard deck"
+        >
+          ➕ New Deck
+        </button>
+      </nav>
     </div>
+  </header>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2025 FlashCard App. All rights reserved.</p>
-    </footer>
+  <!-- Layout: fixed sidebar + fluid main -->
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Flashcard decks and cards">
+      <div class="sidebar__inner">
+        <!-- Decks section -->
+        <div class="sidebar__section">
+          <div class="sidebar__header">
+            <h2 id="decks-heading">Decks</h2>
+            <p id="deck-list-empty" class="sidebar__empty">
+              No decks yet. Create one to get started.
+            </p>
+          </div>
+          <ul
+            id="deck-list"
+            class="sidebar__list"
+            aria-labelledby="decks-heading"
+          ></ul>
+        </div>
+
+        <!-- Cards in active deck -->
+        <div class="sidebar__section sidebar__section--cards">
+          <div class="sidebar__cards-header">
+            <span id="cards-heading">Cards in deck</span>
+          </div>
+          <ul
+            id="sidebar-card-list"
+            class="sidebar__card-list"
+            aria-labelledby="cards-heading"
+          ></ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main
+      id="main-content"
+      class="main"
+      role="main"
+      tabindex="-1"
+      aria-live="polite"
+    >
+      <!-- No deck selected state -->
+      <section id="no-deck-state" class="empty-state">
+        <h2>Welcome 👋</h2>
+        <p>
+          Create your first deck to start studying. Add cards, flip through
+          them, and track your learning.
+        </p>
+        <button
+          id="empty-new-deck-btn"
+          class="btn btn--primary"
+          type="button"
+        >
+          ➕ Create Deck
+        </button>
+      </section>
+
+      <!-- Deck view -->
+      <section id="deck-view" class="deck-view" hidden>
+        <!-- Deck header -->
+        <header class="deck-header">
+          <div class="deck-header__info">
+            <h2 id="deck-title" class="deck-title"></h2>
+            <p id="deck-meta" class="deck-meta"></p>
+            <p id="search-status" class="deck-search-status"></p>
+          </div>
+          <div class="deck-header__actions">
+            <button
+              id="edit-deck-btn"
+              class="btn btn--ghost"
+              type="button"
+            >
+              ✏️ Edit Deck
+            </button>
+            <button
+              id="delete-deck-btn"
+              class="btn btn--danger"
+              type="button"
+            >
+              🗑️ Delete Deck
+            </button>
+          </div>
+        </header>
+
+        <!-- Study card -->
+        <section class="study-area" aria-label="Study area">
+          <div class="card" aria-label="Current flashcard">
+            <div
+              id="card-inner"
+              class="card__inner"
+              role="button"
+              tabindex="0"
+              aria-label="Flashcard front. Press to show back."
+            >
+              <div class="card__face card__front">
+                <p id="card-front-text"></p>
+              </div>
+              <div class="card__face card__back">
+                <p id="card-back-text"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-controls" aria-label="Card navigation controls">
+            <button
+              id="prev-card-btn"
+              class="btn btn--secondary"
+              type="button"
+              aria-label="Previous flashcard"
+            >
+              ← Previous
+            </button>
+
+            <button
+              id="flip-card-btn"
+              class="btn btn--primary"
+              type="button"
+              aria-label="Flip flashcard"
+            >
+              🔁 Flip (Space)
+            </button>
+
+            <button
+              id="next-card-btn"
+              class="btn btn--secondary"
+              type="button"
+              aria-label="Next flashcard"
+            >
+              Next →
+            </button>
+          </div>
+
+          <div class="card-meta-row">
+            <span
+              id="card-position"
+              class="card-count"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Card 0 of 0
+            </span>
+
+            <div class="card-meta-row__right">
+              <button
+                id="new-card-btn"
+                class="btn btn--secondary"
+                type="button"
+              >
+                ➕ New Card
+              </button>
+              <button
+                id="shuffle-btn"
+                class="btn btn--ghost"
+                type="button"
+              >
+                🔀 Shuffle
+              </button>
+              <button
+                id="edit-card-btn"
+                class="btn btn--ghost"
+                type="button"
+              >
+                ✏️ Edit Card
+              </button>
+              <button
+                id="delete-card-btn"
+                class="btn btn--danger"
+                type="button"
+              >
+                🗑️ Delete Card
+              </button>
+            </div>
+          </div>
+
+          <p id="no-cards-message" class="no-cards-message"></p>
+
+          <p class="card-hint">
+            Tip: Click the card or press <kbd>Space</kbd> to flip. Use
+            <kbd>←</kbd> / <kbd>→</kbd> to navigate.
+          </p>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 FlashCard App · Keyboard friendly · Dark/Light mode.</p>
+  </footer>
+
+  <!-- Deck Modal -->
+  <div
+    id="deck-modal"
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="deck-modal-title"
+  >
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog">
+      <button
+        class="modal__close"
+        type="button"
+        aria-label="Close deck dialog"
+        data-modal-close
+      >
+        ✕
+      </button>
+      <h2 id="deck-modal-title" class="modal__title">New Deck</h2>
+      <form id="deck-form" class="modal__form">
+        <label for="deck-name-input">Deck name</label>
+        <input
+          id="deck-name-input"
+          name="deckName"
+          type="text"
+          required
+          minlength="1"
+          maxlength="80"
+        />
+        <p class="modal__help">
+          Choose a descriptive name (e.g. “JS Basics”, “Spanish Verbs”).
+        </p>
+        <div class="modal__actions">
+          <button type="submit" class="btn btn--primary">Save</button>
+          <button
+            type="button"
+            class="btn btn--secondary"
+            data-modal-close
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Card Modal -->
+  <div
+    id="card-modal"
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="card-modal-title"
+  >
+    <div class="modal__backdrop" data-modal-close></div>
+    <div class="modal__dialog">
+      <button
+        class="modal__close"
+        type="button"
+        aria-label="Close card dialog"
+        data-modal-close
+      >
+        ✕
+      </button>
+      <h2 id="card-modal-title" class="modal__title">New Card</h2>
+      <form id="card-form" class="modal__form">
+        <label for="card-front-input">Front</label>
+        <textarea
+          id="card-front-input"
+          name="front"
+          rows="3"
+          required
+        ></textarea>
+
+        <label for="card-back-input">Back</label>
+        <textarea
+          id="card-back-input"
+          name="back"
+          rows="3"
+          required
+        ></textarea>
+
+        <p class="modal__help">
+          Keep each side focused on one idea for better recall.
+        </p>
+
+        <div class="modal__actions">
+          <button type="submit" class="btn btn--primary">Save</button>
+          <button
+            type="button"
+            class="btn btn--secondary"
+            data-modal-close
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
